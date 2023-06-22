@@ -159,6 +159,8 @@ function pullRequestEventMoveCard() {
     return;
   }
 
+  // Get Trello card ID from HEAD branch name
+  const referencedIssuesInGh: string[] = process.ENV.GITHUB_HEAD_REF.match(/[1-9][0-9]*/g) || [];
   // TODO: Allow unspecified target as well so that - say - PR moves card to "Ready for review"
   // list regardless of where it is currently.
   getCardsOfListOrBoard(sourceList)
@@ -168,7 +170,6 @@ function pullRequestEventMoveCard() {
         core.setFailed(cardsOnList);
         return [];
       }
-      const referencedIssuesInGh: string[] = pullRequest?.body?.match(/#[1-9][0-9]*/) || [];
 
       return cardsOnList
         .filter((card) => {
@@ -176,7 +177,7 @@ function pullRequestEventMoveCard() {
           const issueRefsOnCurrentCard = haystack.match(/#[1-9][0-9]*/) || [];
 
           const crossMatchIssues = issueRefsOnCurrentCard.filter((issueRef) =>
-            referencedIssuesInGh.includes(issueRef),
+            referencedIssuesInGh.includes(issueRef.replace('#', '')),
           );
           return crossMatchIssues.length !== 0;
         })
