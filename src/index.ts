@@ -160,7 +160,7 @@ function pullRequestEventMoveCard() {
   }
 
   // Get Trello card ID from HEAD branch name
-  const referencedIssuesInGh: string[] = process.ENV.GITHUB_HEAD_REF.match(/[1-9][0-9]*/g) || [];
+  const referencedIssuesInGh: string[] = process.env.GITHUB_HEAD_REF?.match(/[1-9][0-9]*/g) || [];
   // TODO: Allow unspecified target as well so that - say - PR moves card to "Ready for review"
   // list regardless of where it is currently.
   getCardsOfListOrBoard(sourceList)
