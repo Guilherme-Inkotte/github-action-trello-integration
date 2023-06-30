@@ -312,11 +312,11 @@ exports.createCard = createCard;
  */
 function updateCard(cardId, params) {
     const endpoint = `/cards/${cardId}`;
-    const options = Object.assign(Object.assign({}, apiBaseHeaders()), { method: 'PUT' });
-    const queryParams = new URLSearchParams();
-    queryParams.append('idList', params.destinationListId || '');
-    queryParams.append('idMembers', params.memberIds || '');
-    return (0, node_fetch_1.default)(buildApiUri(endpoint, queryParams), options)
+    const body = {
+        idList: params.destinationListId || '',
+    };
+    const options = Object.assign(Object.assign({}, apiBaseHeaders()), { method: 'PUT', body: JSON.stringify(body) });
+    return (0, node_fetch_1.default)(buildApiUri(endpoint), options)
         .then((response) => __awaiter(this, void 0, void 0, function* () {
         if (!response.ok) {
             console.error(`API endpoint ${endpoint} error: ${response.status} ${response.text}`);
