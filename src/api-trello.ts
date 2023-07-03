@@ -9,6 +9,7 @@ import {
   TrelloAttachment,
   TrelloCardRequestParams,
 } from './types';
+import axios from 'axios';
 
 const apiBaseUrl = 'https://api.trello.com/1';
 const trelloBoard = boardId();
@@ -221,20 +222,16 @@ function updateCard(cardId: string, params: TrelloCardRequestParams): Promise<Tr
   const body = {
     idList: params.destinationListId || '',
   };
-  const options = {
-    ...apiBaseHeaders(),
-    method: 'PUT',
-    body: JSON.stringify(body),
-  };
 
-  return fetch(buildApiUri(endpoint), options as RequestInit)
+  return axios
+    .put(buildApiUri(endpoint), body, { headers: { ...apiBaseHeaders(), method: 'PUT' } })
     .then(async (response) => {
-      if (!response.ok) {
-        console.error(`API endpoint ${endpoint} error: ${response.status} ${response.text}`);
-        return `${response.status} ${response.text}`;
+      if (response.status !== 200) {
+        console.error(`API endpoint ${endpoint} error: ${response.status} ${response.statusText}`);
+        return `${response.status} ${response.statusText}`;
       }
 
-      const data = (await response.json()) as unknown as TrelloLabel[];
+      const data = (await response.data.json()) as unknown as TrelloLabel[];
       if (debug) {
         console.log(`${endpoint} response is`, JSON.stringify(data, undefined, 2));
       }
